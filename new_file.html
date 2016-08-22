@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>事件地图-智能化街道管理服务平台</title>
+		<!--IE Compatibility modes-->
+		<meta http-equiv="Content-Type" charset="UTF-8">
+
+		<!--Mobile first-->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/jquery.dataTables.min.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/dashboard.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/jquery-ui.min.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/jquery-ui.theme.min.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/footer.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/zoom.css">
+		<style>
+			.org-thumb {
+				width: 100px;
+				height: 100px;
+			}
+			
+			img.zoom-img {
+				height: auto;
+			}
+		</style>
+		<!-- CSS -->
+
+		<!-- Icon -->
+		<link rel="icon" type="image/x-icon" href="http://112.74.77.205:996/static/favicon.ico" />
+		<link rel="shortcut icon" type="image/x-icon" href="http://112.74.77.205:996/static/favicon.ico" />
+
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/map/risk_map.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/map/risk_window.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/jquery.iviewer.css">
+		<link rel="stylesheet" type="text/css" href="http://112.74.77.205:996/static/safety/css/jquery.iviewer.custom.css">
+
+		<script src="http://112.74.77.205:996/static/safety/js/jquery-1.12.1.min.js"></script>
+		<script src="http://112.74.77.205:996/static/safety/js/bootstrap.min.js"></script>
+		<script src="http://112.74.77.205:996/static/safety/js/vue.min.js"></script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/jquery.dataTables.chinese.js"></script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/template-native.js"></script>
+		<script>
+			window.district_id = 12;
+			window.API_PREFIX = '/api/v1';
+		</script>
+
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=PxUmLs5QiFvtKPSvgmQ2Zx6R"></script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/jquery.iviewer.min.js"></script>
+		<script src="./js/jquery.js"></script>
+
+
+    <style>
+    	*{
+    		padding:0px;
+    		margin: 0;
+    	}
+    	li{
+   			list-style-type: none;
+    	}
+    	a{
+    		text-decoration: none;
+    		font-family: "微软雅黑";
+    	}
+      	#middle{
+	        width: 100%;
+	        height:895px;
+	        overflow: hidden;
+      	}
+      	#left{
+	        width: 18%;
+	        height: 895px;
+	        float: left;
+	        margin-right:20px;
+	        margin-left: 10px;
+	        overflow: hidden;
+	        background: #eee;
+			position: relative;
+	    }
+	    .arrow{
+	    	position: absolute;
+	    	left: -32px;
+	    	top: 420px;
+	    	width: 27px;
+	    	height: 100px;
+	    	background: url("./img/left.png") no-repeat;
+	    	background-size:contain;
+	    }
+	    .arrow2{
+	    	position: absolute;
+	    	left: -32px;
+	    	top: 420px;
+	    	width: 27px;
+	    	height: 100px;
+	    	background: url("./img/right.png") no-repeat;
+	    	background-size:contain;
+	    	display: none;
+	    }
+	    #left-top{
+	    	width: 100%;
+	    	height: 40px;
+	    	margin-top: 15px;
+	    	border-bottom: 2px solid #ddd;
+	    	line-height: 40px;
+	    	margin-left: 10px;
+	    	margin-right: -10px;
+	    }
+	    #left-bottom{
+	    	width: 99%;
+	        height: 845px;
+	        overflow: scroll;
+	    }
+	    #left-bottom li{
+	    	margin-top: 15px;
+	    	margin-bottom: 10px;
+	    }
+	    #left-bottom li:hover{
+	    	border: 1px solid #298edc;
+	    	background: #298edc;
+	    	font-color:#fff;
+	    	
+	    }
+	    #left-bottom li span:hover{
+	    	color: #fff;
+	    }
+      	#right{
+	        width: 80%;
+	        height: 895px;
+	        float: right;
+	        margin-left: 23px;
+	        position: relative;
+	        box-shadow: -3px 0px 3px 3px #eee;
+	        -webkit-box-shadow:-3px 0px 3px 3px #ddd;
+	        -moz-box-shadow:-3px 0px 3px 3px #ddd;
+	        -ms-box-shadow:-3px 0px 3px 3px #ddd;
+	        -o-box-shadow:-3px 0px 3px 3px #ddd;	        
+	         margin-top: -895px;
+	     }
+		#left-top a{
+			font-size: 15px;
+			font-weight: bold;
+			color: #bbb;
+		}
+		.a1{
+			float: left;
+			margin-left: 15px;
+		}
+		.a2{
+			float: right;
+			margin-right: 30px;
+		}
+		.left-content{
+			width: 317px;
+			height: 58px;
+			margin-top: 25px !important;
+			margin-left: 10px !important;
+			background: url("./img/pad.png")no-repeat;
+			background-size:contain;
+			-webkit-box-shadow:0px 2px 3px 3px #ddd;
+	        -moz-box-shadow:0px 2px 3px 3px #ddd;
+	        -ms-box-shadow:0px 2px 3px 3px #ddd;
+	        -o-box-shadow:0px 2px 3px 3px #ddd;        
+		}
+		.left-content a{
+			width: 100%;
+			height: 58px;
+			line-height: 58px;
+			display: inline-block;
+			position: relative;
+		}
+		.left-content .lc1{
+			color: #bbb;
+			font-size: 16px;
+			position: absolute;
+			left: 3%;
+			width: 5px;
+			height: 58px;
+			display: inline-block;
+		}
+		.left-content .lc2{
+			color: #797979;
+			font-weight: bold;
+			font-size: 15px;
+			position: absolute;
+			left:12%;
+		    overflow: hidden; 
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
+		    width: 70%;
+		    height: 58px;
+		    display: inline-block;
+		}
+		.left-content .lc3{
+			color: #797979;
+			font-size: 15px;
+			position: absolute;
+			left: 82%;
+			width: 5px;
+			height: 58px;
+			display: inline-block;
+		}
+      	.clear{
+      		clear:both;
+      	}
+/*      	.footer-map{
+      		margin-top: -30px;
+      	}*/
+      	html{ 
+      		overflow-x: hidden;
+      		overflow-y: hidden; 
+      	}
+		@media screen and (max-device-width:1024px){
+			#left{
+				width: 16%;
+				margin-right: 30px;
+			}
+			#left-top{
+				width: 161px;
+				height: 40px;
+				border-bottom: 2px solid #ddd;
+				margin-top:0px;
+			}
+			#left-top .a1{
+				font-size: 2px;
+				font-weight: bold;
+				color: #bbb;
+				float: left;
+				width: 60px;
+				height: 20px;
+				display: inline-block;
+				margin-left: 0;
+			}
+			#left-top .a2{
+				font-size: 2px;
+				font-weight: bold;
+				color: #bbb;
+				float: right;
+				width: 100px;
+				height: 20px;
+				display: inline-block;
+				margin-right: 0;
+			}
+			#left-bottom{
+				width:98%;
+			}
+
+			#right{
+				width: 80%;
+				margin-left: 30px;
+			}
+			.arrow,.arrow2{
+				position: absolute;
+	    		left: -32px;
+	    		top: 290px;
+			}
+			.left-content{
+				width: 158px;
+				height: 38px;
+				margin-top: 10px !important;
+				margin-left: 10px !important;
+				background: url("./img/pad.png")no-repeat;
+				background-size:contain;
+				-webkit-box-shadow:0px 2px 3px 3px #ddd;
+		        -moz-box-shadow:0px 2px 3px 3px #ddd;
+		        -ms-box-shadow:0px 2px 3px 3px #ddd;
+		        -o-box-shadow:0px 2px 3px 3px #ddd;        
+			}
+
+			.left-content a{
+				width: 158px;
+				height: 58px;
+				line-height: 38px;
+				display: inline-block;
+				position: relative;
+			}
+			.left-content .lc1{
+				color: #bbb;
+				font-size: 10px;
+				position: absolute;
+				left: 3%;
+				width: 5px;
+				height: 38px;
+				display: inline-block;
+			}
+			.left-content .lc2{
+				color: #797979;
+				font-weight: bold;
+				font-size: 12px;
+				position: absolute;
+				left:12%;
+			    overflow: hidden; 
+			    text-overflow: ellipsis;
+			    white-space: nowrap;
+			    width: 50%;
+			    height: 38px;
+			    display: inline-block;
+			}
+			.left-content .lc3{
+				color: #797979;
+				font-size: 12px;
+				position: absolute;
+				left: 70%;
+				width: 5px;
+				height: 38px;
+				display: inline-block;
+			}
+			 #left-bottom{
+		    	width: 99%;
+		        height: 600px;
+		        overflow: scroll;
+		    }
+		}
+    </style>
+	<script> 
+		$(function(){
+			$(".arrow").click(function(){
+				$("#left").stop().animate({"left" : "-347px"},500);
+				$("#right").stop().animate({"width" : "100%","left" : "26px"},500)
+				$(".arrow2").show();
+			 });
+			$(".arrow2").click(function(){
+				$("#left").stop().animate({"left" : "0px"},500);
+				$("#right").stop().animate({"width" : "80%","left" : "0px"},500)
+				$(".arrow2").hide();
+			});
+		});
+	</script>
+	</head>
+
+	<body >
+
+	<!-- 	<div id="app-panel" class="risk-context">
+			<div class="panel panel-default" v-show="pickedShow">
+				<div>
+					<a class="btn" v-on:click="back">&lt;&lt; 返回到事件分类</a>
+				</div>
+				<div class="panel-heading text-center active">
+					{{ picked }}
+				</div>
+				<div class="panel-body organization-wrap">
+					<p>事件数量：{{ events.length }}</p>
+					<div class="form-group has-info has-feedback">
+						<input type="text" class="form-control" placeholder="请输入搜索关键词" v-model="searchText" />
+						<span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+					</div>
+
+					<div v-for="event in events | filterBy searchText in 'code' 'name' 'content' 'created_man' ">
+						<div class="organization-card">
+							<div class="pull-left title muted">{{ $index + 1 }}</div>
+							<div class="body">
+								<div class="title">{{ event.title }}</div>
+								<div class="muted">{{ event.content }}</div>
+								<div class="contact">
+									<div>状态：{{ statesObj[event.state] }}</div>
+									<div>所在区域：<span class="muted">{{ event.district.name }}</span></div>
+									<div>
+										<span class="pull-right"><a v-on:click="showDetail($index)">详情</a></span> 详细地址：
+										<span class="muted">{{ event.address }}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="panel panel-default" v-else>
+				<div class="panel-body">
+					事件分类开始
+					<div>
+						<table id="index_table_info" class="table">
+							<thead>
+								<tr>
+									<th class="table_content">&nbsp;</th>
+									<th class="table-title">事件分类</th>
+									<th class="table_content table-title">事件数量(已立案)</th>
+									<th class="table_content table-title">选择</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="item in categories">
+									<td class="table_content"> {{ $index+1 }}</td>
+									<td width="50%" class="table-text">
+										<input type="hidden" id="text{{ $index+1 }}" v-bind:value="item.id" /> {{ item.name }}
+									</td>
+									<td class="table_content table-text"> {{ item.total - item.count.pending - item.count.revoked - item.count.success }}</td>
+									<td class="table_content" v-if=" $index == 0">
+										<input type="radio" name="is_pass" v-bind:value="item.name" v-model="picked" v-on:click="selected(item.id)" checked />
+									</td>
+									<td class="table_content" v-else>
+										<input type="radio" name="is_pass" v-bind:value="item.name" v-on:click="selected(item.id)" v-model="picked" />
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+
+
+
+
+
+					事件分类结束
+				</div>
+			</div>
+		</div> -->
+
+		<div id="top">
+			<!-- .navbar -->
+			<nav class="navbar navbar-inverse navbar-fixed-top nav-style1" role="navigation" style="z-index:1">
+				<div class="container-fluid">
+					<div class="navbar-header nav-hd">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar1" aria-expanded="true" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar">--</span>
+                <span class="icon-bar">----</span>
+                <span class="icon-bar">---</span>
+              </button>
+						<div href="/" style="padding:10px">
+							<img src="http://112.74.77.205:996/static/safety/images/web_nav_logo.png" style="height:30px" class="img-responsive" alt="Responsive image">
+						</div>
+					</div>
+					<div id="navbar1" class="collapse navbar-collapse" aria-expanded="true">
+						<!-- 左侧.nav -->
+						<ul class="nav navbar-nav ">
+
+							<li>
+								<a class="current-nav " href="/event-map/">事件地图</a>
+							</li>
+							<li>
+								<a class="" href="/event/">事件管理</a>
+							</li>
+							<li>
+								<a class="" href="/event-staff-map/">网格员地图</a>
+							</li>
+							<li>
+								<a class="" href="/chain-of-responsibility/">责任链管理</a>
+							</li>
+
+							<li>
+								<a class="" href="/inspections/">巡查管理</a>
+							</li>
+
+							<li>
+								<a class="" href="/organization/">单位管理</a>
+							</li>
+
+						</ul>
+						<!-- /.nav -->
+						<!-- 右侧.nav -->
+						<ul class="nav navbar-nav navbar-right">
+							<li class="dropdown">
+								<a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									<span class="glyphicon glyphicon-user" aria-hidden="true"></span> 赵志远
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									<li>
+										<a href="/change-password/">修改密码</a>
+									</li>
+								</ul>
+							</li>
+							<li>
+								<a href="/logout/"><span class="glyphicon glyphicon-off" aria-hidden="true"></span> 退出</a>
+							</li>
+							<li>
+								<a href="#"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 帮助</a>
+							</li>
+						</ul>
+						<!-- /.nav -->
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</nav>
+			<!-- /.navbar -->
+		</div>
+		<!-- /#top -->
+
+
+          <!-- 测试数据部分 -->
+		<div id="middle">   
+			<div id="left">
+				<div id="left-top">
+					<a href="#" class="a1">事件分类</a>
+					<a href="" class="a2">事件数量(已立案)</a>
+				</div>
+				<ul id="left-bottom">
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">1</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">2</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">3</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳上访维稳上访维稳上访维稳上访维稳</span>
+							<span class="lc3">4</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">5</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">6</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">7</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">8</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">9</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">10</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">11</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">12</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">13</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">14</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">15</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">16</span>
+						</a>
+					</li>
+					<li class="left-content">
+						<a href="#">
+							<span class="lc1">1</span>
+							<span class="lc2">上访维稳</span>
+							<span class="lc3">17</span>
+						</a>
+					</li>
+				</ul>
+				
+			</div>
+			<div id="right" >
+				<div id="iviewer">
+		          <div class="loader"></div>
+		          <div class="viewer"></div>
+		          <ul class="controls">
+		            <li class="btn-close"></li>
+		          </ul>
+		        </div>
+		        <div class="map" id="data_map" ></div>
+		        <div class="arrow"></div>
+		        <div class="arrow2"></div>
+			</div>  
+		</div>
+<!--测试数据结束  -->
+
+		<!-- 图片放大预览插件 -->
+
+
+<!-- 
+		<div id="mask2" class="mask">
+			<div class="row">
+				<div class="col-md-3">
+					<button type="button" class="btn btn-default btn-lg btn-risk " style="margin-top: 1px" onclick="$('#app-panel').toggle('hidden');">
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                </button>
+				</div>
+			</div>
+		</div>
+ -->
+<!-- 		<footer class="footer-map">
+		</footer> -->
+
+		<script>
+			// using jQuery
+			function getCookie(name) {
+				var cookieValue = null;
+				if(document.cookie && document.cookie != '') {
+					var cookies = document.cookie.split(';');
+					for(var i = 0; i < cookies.length; i++) {
+						var cookie = jQuery.trim(cookies[i]);
+						// Does this cookie string begin with the name we want?
+						if(cookie.substring(0, name.length + 1) == (name + '=')) {
+							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+				return cookieValue;
+			}
+
+			function csrfSafeMethod(method) {
+				// these HTTP methods do not require CSRF protection
+				return(/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+			}
+
+			$(document).ready(function() {
+				var csrftoken = getCookie('csrftoken');
+				$.ajaxSetup({
+					beforeSend: function(xhr, settings) {
+						if(!csrfSafeMethod(settings.type) && !this.crossDomain) {
+							xhr.setRequestHeader("X-CSRFToken", csrftoken);
+						}
+					}
+				});
+			});
+		</script>
+
+		<script id="t_event_detail" type="text/html">
+			<div class="row" style="min-width:350px">
+				<div style="padding-left: 1em;">
+					<h4><a href="/event/<%= id %>/"><%= title %></a></h4>
+					<p><small>状态：<%= $humanizeState(state) %></small></p>
+					<hr style="height:1px;border:none;border-top:1px solid #D8D8D8;">
+					<% for (var i=0; i < photos.length; i++) { %>
+					<img class="go org-thumb" src="<%= photos[i].url %>" />
+					<% } %>
+					<hr style="height:1px;border:none;border-top:1px solid #D8D8D8;">
+					<p class="muted">详情：
+						<%= content %>
+					</p>
+					<p>所在区域：
+						<%= district.name %> </p>
+					<p>地址：
+						<%= address %>
+					</p>
+				</div>
+			</div>
+		</script>
+
+		<script>
+			var lng = 116.0830850000;
+			var lat = 43.9576940000;
+		</script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/menus1/event_map.js"></script>
+
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/zoom.js"></script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/notify.js"></script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/moment.min.js"></script>
+		<script type="text/javascript" src="http://112.74.77.205:996/static/safety/js/cache-models.js"></script>
+		<script>
+			$(document).ready(function() {
+				$.notify.defaults({
+					globalPosition: 'top center',
+					className: 'success'
+				});
+			});
+			Vue.filter('formatDateTime', function(value) {
+				var m = moment(value);
+				if(m.isValid()) {
+					return m.format('YYYY-MM-DD HH:mm');
+				} else {
+					return value;
+				}
+			});
+			Vue.filter('makeOSSThumb', function(value) {
+				var url = value;
+				if(url.indexOf('img-cn') > 0 && url.indexOf('@') === -1) {
+					url = url + '@1e_1c_0o_1l_256h_256w_90q.src';
+				}
+				return url;
+			});
+
+			/* 图片放大预览 */
+			var makePreview = function() {
+				/* 图片放大预览开始 */
+				function processOSSURL(url) {
+					var index = url.indexOf('@');
+					if(index > 0) {
+						url = url.substr(0, index);
+					}
+					return url;
+				}
+
+				function init() {
+					var viewer = $("#iviewer .viewer").
+					width($(window).width() - 80).
+					height($(window).height()).
+					iviewer({
+						// ui_disabled : true,
+						src: 'http://112.74.77.205:996/static/safety/images/web_nav_logo.png',
+						zoom: 'fit',
+						mousewheel: false,
+						onFinishLoad: function(ev) {
+							$("#iviewer .loader").fadeOut();
+							$("#iviewer .viewer").fadeIn();
+						}
+					});
+				}
+
+				function open(src) {
+					$("#iviewer").fadeIn().trigger('fadein');
+					$("#iviewer .loader").show();
+					$("#iviewer .viewer").hide();
+
+					var viewer = $("#iviewer .viewer")
+						.iviewer('loadImage', src)
+						.iviewer('set_zoom', 'fit');
+				}
+
+				function close() {
+					$("#iviewer").fadeOut().trigger('fadeout');
+				}
+
+				$('.go').on('click', function(e) {
+					e.preventDefault();
+					var src = $(this).attr('src');
+					var pattern = /^http*/g;
+					pattern.test(src) && open(processOSSURL(src));
+				});
+
+				$("#iviewer .btn-close").click(function(e) {
+					e.preventDefault();
+					close();
+				});
+
+				$("#iviewer").bind('fadein', function() {
+					$(window).keydown(function(e) {
+						if(e.which == 27) close();
+					});
+				});
+
+				init();
+				/* 图片放大预览结束 */
+			};
+		</script>
+	</body>
+
+</html>
